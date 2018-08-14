@@ -97,8 +97,8 @@ class Annonser extends Component {
 
     return (
       <div>
-        <input type="text" name="nyckelord" onChange={this.changeNyckelord} value={nyckelord} placeholder="Sök nyckelord" />
-        <select name="antalrader" onChange={this.changeAntalRader} value={antalrader}>
+        <input type="text" name="nyckelord" onChange={this.handleChange} value={nyckelord} placeholder="Sök nyckelord" />
+        <select name="antalrader" onChange={this.handleChange} value={antalrader}>
           <option value="10">
             10
           </option>
@@ -106,7 +106,7 @@ class Annonser extends Component {
             20
           </option>
         </select>
-        <select name="lanid" onChange={this.changeLanid} value={lanid}>
+        <select name="lanid" onChange={this.handleChange} value={lanid}>
           <option value="1">
             Stockholm
           </option>
@@ -117,7 +117,7 @@ class Annonser extends Component {
             Uppsala
           </option>
         </select>
-        <select name="yrkesomradeid" onChange={this.changeYrkesomrade} value={yrkesomradeid}>
+        <select name="yrkesomradeid" onChange={this.handleChange} value={yrkesomradeid}>
           {this.createDropdown(yrkesomraden)}
         </select>
         {listOfAnnonser}
