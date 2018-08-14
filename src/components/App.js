@@ -12,6 +12,7 @@ class App extends Component {
     antalrader: 10,
     lanid: 1,
     yrkesomradeid: 3,
+    nyckelord: '',
   }
 
   /**
@@ -29,7 +30,7 @@ class App extends Component {
    * nested objects (matchningslista.matchningdata)
    */
   getAnnonser = () => {
-    fetch(`http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=${this.state.lanid}&yrkesomradeid=${this.state.yrkesomradeid}&antalrader=${this.state.antalrader}`)
+    fetch(`http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=${this.state.lanid}&yrkesomradeid=${this.state.yrkesomradeid}&antalrader=${this.state.antalrader}&nyckelord=${this.state.nyckelord}`)
       .then(response => response.json())
       .then((annonser) => {
         this.setState({ annonser: annonser.matchningslista.matchningdata });
@@ -42,6 +43,18 @@ class App extends Component {
 
   changeAntalRader = (event) => {
     this.setState({ antalrader: event.target.value }, () => {
+      this.getAnnonser();
+    });
+  }
+
+  changeLanid = (event) => {
+    this.setState({ lanid: event.target.value }, () => {
+      this.getAnnonser();
+    });
+  }
+
+  changeNyckelord = (event) => {
+    this.setState({ nyckelord: event.target.value }, () => {
       this.getAnnonser();
     });
   }
@@ -63,7 +76,9 @@ class App extends Component {
      * https://reactjs.org/docs/handling-events.html#passing-arguments-to-event-handlers
      * If we didn't send an argument we could write 'this.getOneAnnons'
      */
-    const { annonser } = this.state;
+    const {
+      annonser, antalrader, lanid, nyckelord,
+    } = this.state;
     const listOfAnnonser = annonser.map(annons => (
       <div key={annons.annonsid}>
         <p>
@@ -77,12 +92,24 @@ class App extends Component {
 
     return (
       <div>
-        <select onChange={this.changeAntalRader} value={this.state.antalrader}>
+        <input type="text" onChange={this.changeNyckelord} value={nyckelord} />
+        <select onChange={this.changeAntalRader} value={antalrader}>
           <option value="10">
             10
           </option>
           <option value="20">
             20
+          </option>
+        </select>
+        <select onChange={this.changeLanid} value={lanid}>
+          <option value="1">
+            Stockholm
+          </option>
+          <option value="2">
+            Whatever
+          </option>
+          <option value="3">
+            Uppsala
           </option>
         </select>
         { listOfAnnonser }
