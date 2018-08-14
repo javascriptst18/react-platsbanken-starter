@@ -9,6 +9,9 @@ class App extends Component {
    */
   state = {
     annonser: [],
+    antalrader: 10,
+    lanid: 1,
+    yrkesomradeid: 3,
   }
 
   /**
@@ -26,7 +29,7 @@ class App extends Component {
    * nested objects (matchningslista.matchningdata)
    */
   getAnnonser = () => {
-    fetch('http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=1&yrkesomradeid=3&antalrader=30')
+    fetch(`http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=${this.state.lanid}&yrkesomradeid=${this.state.yrkesomradeid}&antalrader=${this.state.antalrader}`)
       .then(response => response.json())
       .then((annonser) => {
         this.setState({ annonser: annonser.matchningslista.matchningdata });
@@ -35,6 +38,12 @@ class App extends Component {
 
   getOneAnnons = (annons) => {
     console.log(annons);
+  }
+
+  changeAntalRader = (event) => {
+    this.setState({ antalrader: event.target.value }, () => {
+      this.getAnnonser();
+    });
   }
 
   render() {
@@ -68,6 +77,14 @@ class App extends Component {
 
     return (
       <div>
+        <select onChange={this.changeAntalRader} value={this.state.antalrader}>
+          <option value="10">
+            10
+          </option>
+          <option value="20">
+            20
+          </option>
+        </select>
         { listOfAnnonser }
       </div>
     );
