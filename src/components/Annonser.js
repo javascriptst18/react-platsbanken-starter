@@ -58,6 +58,12 @@ class Annonser extends Component {
     });
   }
 
+  handleNyckelord = (event) => {
+    this.setState({ nyckelord: event.target.value }, () => {
+      this.getAnnonser();
+    });
+  }
+
   createDropdown = (yrkesomraden) => {
     return yrkesomraden.map(yrkesomrade => (
       <option key={yrkesomrade.id} value={yrkesomrade.id}>
@@ -101,7 +107,7 @@ class Annonser extends Component {
 
     return (
       <div>
-        <input type="text" name="nyckelord" onChange={this.handleChange} value={nyckelord} placeholder="Sök nyckelord" />
+        <input type="text" name="nyckelord" onChange={this.handleNyckelord} value={nyckelord} placeholder="Sök nyckelord" />
         <select name="antalrader" onChange={this.handleChange} value={antalrader}>
           <option value="10">
             10

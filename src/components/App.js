@@ -1,12 +1,14 @@
 import React from 'react';
 import { BrowserRouter, Route, Link, Switch, NavLink } from 'react-router-dom';
 import Annonser from './Annonser';
+import Heading from './Heading';
 import '../styles/App.css';
 
 function App() {
   return (
     <BrowserRouter>
       <div>
+        <Heading> Hello! </Heading>
         <nav>
           <Link to="/"> Home</Link>
           <Link to="/about"> About </Link>
@@ -33,7 +35,7 @@ function App() {
   )
 }
 
-function About() {
+function About(props) {
   return <h1> About! </h1>;
 }
 
@@ -43,10 +45,6 @@ function Home(){
 
 function SayHello(props){
   return <h1>Tjena {props.match.params.name}</h1>
-}
-
-function Heading({ className, title }){
-  return <h1 className={className}>{title}</h1>
 }
 
 export default App;
