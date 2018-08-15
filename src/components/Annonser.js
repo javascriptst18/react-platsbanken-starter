@@ -1,4 +1,4 @@
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
 
 class Annonser extends Component {
   /**
@@ -51,7 +51,9 @@ class Annonser extends Component {
   }
 
   handleChange = (event) => {
+    // <input name="email" onChange={this.handleChange} value={this.state.email} />
     this.setState({ [event.target.name]: event.target.value }, () => {
+      // Call this function when state has changed
       this.getAnnonser();
     });
   }
@@ -61,6 +63,19 @@ class Annonser extends Component {
       <option key={yrkesomrade.id} value={yrkesomrade.id}>
         {yrkesomrade.namn}
       </option>
+    ));
+  }
+
+  createListOfAnnonser = (annonser) => {
+    return annonser.map(annons => (
+      <div key={annons.annonsid}>
+        <p>
+          {annons.annonsrubrik}
+        </p>
+        <button type="button" onClick={() => this.getOneAnnons(annons)}>
+          Logga annons
+        </button>
+      </div>
     ));
   }
 
@@ -81,19 +96,8 @@ class Annonser extends Component {
      * https://reactjs.org/docs/handling-events.html#passing-arguments-to-event-handlers
      * If we didn't send an argument we could write 'this.getOneAnnons'
      */
-    const {
-      annonser, antalrader, lanid, nyckelord, yrkesomradeid, yrkesomraden,
-    } = this.state;
-    const listOfAnnonser = annonser.map(annons => (
-      <div key={annons.annonsid}>
-        <p>
-          {annons.annonsrubrik}
-        </p>
-        <button type="button" onClick={() => this.getOneAnnons(annons)}>
-          Logga annons
-        </button>
-      </div>
-    ));
+    const { annonser, antalrader, lanid, nyckelord, yrkesomradeid, yrkesomraden } = this.state;
+    const listOfAnnonser = this.createListOfAnnonser(annonser);
 
     return (
       <div>
