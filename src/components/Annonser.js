@@ -9,7 +9,7 @@ class Annonser extends Component {
   state = {
     annonser: [],
     antalrader: 10,
-    lanid: 1,
+    lanid: this.props.match.params.lanid,
     yrkesomradeid: 3,
     nyckelord: '',
     yrkesomraden: [],

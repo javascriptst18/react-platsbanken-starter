@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch, NavLink } from 'react-router-dom';
 import Annonser from './Annonser';
 import '../styles/App.css';
 
@@ -11,24 +11,42 @@ function App() {
           <Link to="/"> Home</Link>
           <Link to="/about"> About </Link>
           <Link to="/annonser"> Annonser </Link>
+          <Link to="/lan/1"> Stockholm </Link>
         </nav>
-        <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/annonser" component={Annonser} />
-        <Route path="/:namn" component={About} />
-        <Route component={Home} />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route path="/annonser" component={Annonser} />
+          <Route path="/lan/:lanid" component={Annonser} />
+          <Route path="/yrkesomrade/:yrkesomradeid" component={Annonser} />
+          <Route component={Home} />
+        </Switch>
+        <footer>
+          <nav>
+            <Link to="/"> Home</Link>
+            <Link to="/about"> About </Link>
+            <Link to="/annonser"> Annonser </Link>
+          </nav>
+        </footer>
       </div>
     </BrowserRouter>
   )
 }
 
-function About(props) {
-  console.log(props.location);
+function About() {
   return <h1> About! </h1>;
 }
 
 function Home(){
-  return <h1>Tjena från home</h1>
+  return <h1> Tjena från home </h1>
+}
+
+function SayHello(props){
+  return <h1>Tjena {props.match.params.name}</h1>
+}
+
+function Heading({ className, title }){
+  return <h1 className={className}>{title}</h1>
 }
 
 export default App;
