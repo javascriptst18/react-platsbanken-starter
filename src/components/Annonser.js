@@ -9,7 +9,7 @@ class Annonser extends Component {
   state = {
     annonser: [],
     antalrader: 10,
-    lanid: this.props.match.params.lanid,
+    lanid: this.props.match.params.lanid || 1,
     yrkesomradeid: 3,
     nyckelord: '',
     yrkesomraden: [],
@@ -21,8 +21,31 @@ class Annonser extends Component {
    * function that fetches ads on load
    */
   componentDidMount() {
-    this.getAnnonser();
+    if(this.props.location.search){
+      this.checkforQueryParams();
+    } else {
+      this.getAnnonser();
+    }
     this.getYrkesomraden();
+  }
+
+  checkforQueryParams = () => {
+    /**
+     * Everything after '?' is stored in this.props.location.search
+     * to remove the question mark we can use substring to start on index 1 
+     * and skip the first char in the string. Every parameter is separated with
+     * '&' so we can use split to create an array of every value
+     */
+    const queryParams = this.props.location.search.substring(1).split('&');
+    // Split will create an array that we need to loop, we need to split once more
+    for(let query of queryParams){
+        /**
+         * When we split we can use destructuring to immediatly name
+         * index 0 and index 1 to key and value
+         */
+        const [ key, value ] = query.split('=');
+        this.setState({ [key] : parseInt(value, 10) }, this.getAnnonser);
+    }
   }
 
   /**
@@ -31,7 +54,7 @@ class Annonser extends Component {
    * nested objects (matchningslista.matchningdata)
    */
   getAnnonser = () => {
-    fetch(`http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=${this.state.lanid}&yrkesomradeid=${this.state.yrkesomradeid}&antalrader=${this.state.antalrader}&nyckelord=${this.state.nyckelord}`)
+    fetch(`http://api.arbetsformedlingen.se/af/v0/platsannonser/matchning?lanid=${this.state.lanid}&yrkesomradeid=${this.state.yrkesomradeid}&antalrader=${this.state.antalrader}`)
       .then(response => response.json())
       .then((annonser) => {
         this.setState({ annonser: annonser.matchningslista.matchningdata });
@@ -46,22 +69,23 @@ class Annonser extends Component {
       });
   }
 
-  getOneAnnons = (annons) => {
-    console.log(annons);
-  }
-
   handleChange = (event) => {
     // <input name="email" onChange={this.handleChange} value={this.state.email} />
-    this.setState({ [event.target.name]: event.target.value }, () => {
-      // Call this function when state has changed
-      this.getAnnonser();
-    });
+    this.setState({ [event.target.name]: event.target.value }, this.updateURL);
   }
 
-  handleNyckelord = (event) => {
-    this.setState({ nyckelord: event.target.value }, () => {
-      this.getAnnonser();
-    });
+  search = () => {
+    this.getAnnonser();
+  }
+
+  updateURL = () => {
+    let queryParams = `?`;
+    queryParams += `lanid=${this.state.lanid}`;
+    queryParams += `&yrkesomradeid=${this.state.yrkesomradeid}`;
+    if(this.state.nyckelord){
+      queryParams += `&nyckelord=${this.state.nyckelord}`;
+    }
+    this.props.history.push(queryParams);
   }
 
   createDropdown = (yrkesomraden) => {
@@ -78,9 +102,6 @@ class Annonser extends Component {
         <p>
           {annons.annonsrubrik}
         </p>
-        <button type="button" onClick={() => this.getOneAnnons(annons)}>
-          Logga annons
-        </button>
       </div>
     ));
   }
@@ -107,7 +128,7 @@ class Annonser extends Component {
 
     return (
       <div>
-        <input type="text" name="nyckelord" onChange={this.handleNyckelord} value={nyckelord} placeholder="Sök nyckelord" />
+        <input type="text" name="nyckelord" onChange={this.handleChange} value={nyckelord} placeholder="Sök nyckelord" />
         <select name="antalrader" onChange={this.handleChange} value={antalrader}>
           <option value="10">
             10
@@ -130,6 +151,7 @@ class Annonser extends Component {
         <select name="yrkesomradeid" onChange={this.handleChange} value={yrkesomradeid}>
           {this.createDropdown(yrkesomraden)}
         </select>
+        <button onClick={this.search}>Search</button>
         {listOfAnnonser}
       </div>
     );

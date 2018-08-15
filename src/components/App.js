@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Link, Switch, NavLink } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 import Annonser from './Annonser';
 import Heading from './Heading';
 import '../styles/App.css';
@@ -41,10 +41,6 @@ function About(props) {
 
 function Home(){
   return <h1> Tjena från home </h1>
-}
-
-function SayHello(props){
-  return <h1>Tjena {props.match.params.name}</h1>
 }
 
 export default App;
