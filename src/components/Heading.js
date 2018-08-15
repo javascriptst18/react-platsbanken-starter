@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function MyHeading(){
-  return <h1>Hehe!</h1>
+function MyHeading(props){
+  return <h1 className={props.className}>Hehe!</h1>
 }
 
 const StyledHeading = styled(MyHeading)`
