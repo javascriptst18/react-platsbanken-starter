@@ -37,8 +37,11 @@ class App extends Component {
       .database()
       .ref('/favorites') // Listen for path /favorites only
       .on('child_added', (snapshot) => {
+        // Clone the original state
         const updatedFavorites = [...this.state.favorites];
+        // Push the new value into the cloned array
         updatedFavorites.push(snapshot.val());
+        // Replace array in state
         this.setState({ favorites: updatedFavorites });
       }) // Each time child is added
     
@@ -46,14 +49,31 @@ class App extends Component {
       .database()
       .ref('/favorites') // Listen for path /favorites only
       .on('child_removed', (snapshot) => {
-        console.log(snapshot.val()); //Implement
+        // Snapshot is the removed annons, save to variable
+        const removedAnnons = snapshot.val();
+        // Filter only the one item to be removed
+        const filteredFavorites = this.state.favorites.filter(item => {
+          return item.annonsid !== removedAnnons.annonsid;
+        });
+        // Replace state
+        this.setState({ favorites: filteredFavorites });
       }) // Each time child is removed
 
     firebase
       .database()
       .ref('/favorites') // Listen for path /favorites only
       .on('child_changed', (snapshot) => {
-        console.log(snapshot.val()); //Implement
+        const changedAnnons = snapshot.val();
+        // Same as filter
+        const changedFavorites = this.state.favorites.map(item => {
+          if(item.annonsid === changedAnnons.annonsid){
+            // But return the snapshot instead of the original value
+            return changedAnnons;
+          }
+          // If no match, return the original value
+          return item;
+        })
+        this.setState({ favorites: changedFavorites });
       }) // Each time child is changed
   }
 
@@ -73,8 +93,15 @@ class App extends Component {
   pushOneAnnons = (favorit) => {
     firebase
       .database()
-      .ref(`/favorites`)
-      .push(favorit);
+      .ref(`/favorites/${favorit.annonsid}`)
+      .set(favorit);
+  }
+
+  removeOneAnnons = (favorit) => {
+    firebase
+      .database()
+      .ref(`/favorites/${favorit.annonsid}`)
+      .remove();
   }
 
   render() {
@@ -85,19 +112,21 @@ class App extends Component {
           { annons.annonsrubrik }
         </p>
         <button type="button" onClick={() => this.pushOneAnnons(annons)}>
-          Logga annons
+          Fav
         </button>
       </div>
     ));
 
-    const listenForFavorites = favorites.map(fav => (
-      <p> { fav.annonsrubrik } </p>
+    const listOfFavorites = favorites.map(fav => (
+      <p> { fav.annonsrubrik }
+        <button onClick={() => this.removeOneAnnons(fav) }>Remove</button>
+       </p>
     ))
 
     return (
       <div>
         <h1>Favvisar</h1>
-        { listenForFavorites }
+        { listOfFavorites }
         <h1>Annat skit</h1>
         { listOfAnnonser }
       </div>
