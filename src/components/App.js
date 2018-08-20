@@ -40,21 +40,21 @@ class App extends Component {
         const updatedFavorites = [...this.state.favorites];
         updatedFavorites.push(snapshot.val());
         this.setState({ favorites: updatedFavorites });
-      }) // Each time ANY value changes
+      }) // Each time child is added
     
     firebase
       .database()
       .ref('/favorites') // Listen for path /favorites only
       .on('child_removed', (snapshot) => {
         console.log(snapshot.val()); //Implement
-      }) // Each time ANY value changes
+      }) // Each time child is removed
 
     firebase
       .database()
       .ref('/favorites') // Listen for path /favorites only
       .on('child_changed', (snapshot) => {
         console.log(snapshot.val()); //Implement
-      }) // Each time ANY value changes
+      }) // Each time child is changed
   }
 
   /**
