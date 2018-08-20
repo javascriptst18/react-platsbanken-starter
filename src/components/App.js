@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from '../firebase';
+import firebase, { favorites } from '../firebase';
 import '../styles/App.css';
 
 function toArray(firebaseObject) {
@@ -33,9 +33,7 @@ class App extends Component {
   }
 
   listenForFavorites = () => {
-    firebase
-      .database()
-      .ref('/favorites') // Listen for path /favorites only
+    favorites // Listen for path /favorites only
       .on('child_added', (snapshot) => {
         // Clone the original state
         const updatedFavorites = [...this.state.favorites];

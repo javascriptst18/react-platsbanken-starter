@@ -9,6 +9,11 @@ const config = {
   messagingSenderId: '506621013811',
 };
 
+
 firebase.initializeApp(config);
 
+export const favorites = firebase
+  .database()
+  .ref('/favorites');
+  
 export default firebase;
