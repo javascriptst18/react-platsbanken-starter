@@ -36,9 +36,24 @@ class App extends Component {
     firebase
       .database()
       .ref('/favorites') // Listen for path /favorites only
-      .on('value', (snapshot) => {
-        const favorites = toArray(snapshot.val()); // .val() == .json()
-        this.setState({ favorites: favorites });
+      .on('child_added', (snapshot) => {
+        const updatedFavorites = [...this.state.favorites];
+        updatedFavorites.push(snapshot.val());
+        this.setState({ favorites: updatedFavorites });
+      }) // Each time ANY value changes
+    
+    firebase
+      .database()
+      .ref('/favorites') // Listen for path /favorites only
+      .on('child_removed', (snapshot) => {
+        console.log(snapshot.val()); //Implement
+      }) // Each time ANY value changes
+
+    firebase
+      .database()
+      .ref('/favorites') // Listen for path /favorites only
+      .on('child_changed', (snapshot) => {
+        console.log(snapshot.val()); //Implement
       }) // Each time ANY value changes
   }
 
@@ -58,7 +73,7 @@ class App extends Component {
   pushOneAnnons = (favorit) => {
     firebase
       .database()
-      .ref('/favorites')
+      .ref(`/favorites`)
       .push(favorit);
   }
 
