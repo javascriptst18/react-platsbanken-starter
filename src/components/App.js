@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
+import firebase from '../firebase';
 import '../styles/App.css';
 
+function toArray(firebaseObject) {
+  let array = []
+  for (let item in firebaseObject) {
+    array.push({ ...firebaseObject[item], key: item })
+  }
+  return array;
+}
+
 class App extends Component {
+
   /**
    * annonser is an array of objects, this array is filled
    * when initial fetch is fullfilled, until then it's an
@@ -9,6 +19,7 @@ class App extends Component {
    */
   state = {
     annonser: [],
+    favorites: [],
   }
 
   /**
@@ -18,6 +29,17 @@ class App extends Component {
    */
   componentDidMount() {
     this.getAnnonser();
+    this.listenForFavorites();
+  }
+
+  listenForFavorites = () => {
+    firebase
+      .database()
+      .ref('/favorites') // Listen for path /favorites only
+      .on('value', (snapshot) => {
+        const favorites = toArray(snapshot.val()); // .val() == .json()
+        this.setState({ favorites: favorites });
+      }) // Each time ANY value changes
   }
 
   /**
@@ -33,41 +55,35 @@ class App extends Component {
       });
   }
 
-  getOneAnnons = (annons) => {
-    console.log(annons);
+  pushOneAnnons = (favorit) => {
+    firebase
+      .database()
+      .ref('/favorites')
+      .push(favorit);
   }
 
   render() {
-    /**
-     * Create an array of JSX-elements with the headline
-     * of each ad. Map or loop through the ads in state and
-     * create a new array, then render the array. airbnb
-     * demands that we destructure the data on line 42:
-     * https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-     *
-     * key is needed on every created list item:
-     * https://reactjs.org/docs/lists-and-keys.html
-     *
-     * We need an anonymous callback function that wraps
-     * the 'onClick' if we need to send an argument to the
-     * function:
-     * https://reactjs.org/docs/handling-events.html#passing-arguments-to-event-handlers
-     * If we didn't send an argument we could write 'this.getOneAnnons'
-     */
-    const { annonser } = this.state;
+    const { annonser, favorites } = this.state;
     const listOfAnnonser = annonser.map(annons => (
       <div key={annons.annonsid}>
         <p>
           { annons.annonsrubrik }
         </p>
-        <button type="button" onClick={() => this.getOneAnnons(annons)}>
+        <button type="button" onClick={() => this.pushOneAnnons(annons)}>
           Logga annons
         </button>
       </div>
     ));
 
+    const listenForFavorites = favorites.map(fav => (
+      <p> { fav.annonsrubrik } </p>
+    ))
+
     return (
       <div>
+        <h1>Favvisar</h1>
+        { listenForFavorites }
+        <h1>Annat skit</h1>
         { listOfAnnonser }
       </div>
     );
@@ -75,3 +91,6 @@ class App extends Component {
 }
 
 export default App;
+
+
+
