@@ -13,6 +13,7 @@ class App extends Component {
   state = {
     annonser: [],
     favorites: [],
+    user: ''
   }
 
   /**
@@ -23,6 +24,17 @@ class App extends Component {
   componentDidMount() {
     this.getAnnonser();
     this.listenForFavorites();
+    this.auth();
+  }
+
+  auth = () => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user){
+        this.setState({ user });
+      } else {
+        this.setState({ user: ''});
+      }
+    })
   }
 
   listenForFavorites = () => {
@@ -136,6 +148,3 @@ class App extends Component {
 }
 
 export default App;
-
-
-
