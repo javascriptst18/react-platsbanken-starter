@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import firebase, { favorites } from '../firebase';
+import '../styles/normalize.css';
 import '../styles/App.css';
-
-function toArray(firebaseObject) {
-  let array = []
-  for (let item in firebaseObject) {
-    array.push({ ...firebaseObject[item], key: item })
-  }
-  return array;
-}
 
 class App extends Component {
 
@@ -43,9 +36,7 @@ class App extends Component {
         this.setState({ favorites: updatedFavorites });
       }) // Each time child is added
     
-    firebase
-      .database()
-      .ref('/favorites') // Listen for path /favorites only
+    favorites // Listen for path /favorites only
       .on('child_removed', (snapshot) => {
         // Snapshot is the removed annons, save to variable
         const removedAnnons = snapshot.val();
@@ -57,9 +48,7 @@ class App extends Component {
         this.setState({ favorites: filteredFavorites });
       }) // Each time child is removed
 
-    firebase
-      .database()
-      .ref('/favorites') // Listen for path /favorites only
+    favorites // Listen for path /favorites only
       .on('child_changed', (snapshot) => {
         const changedAnnons = snapshot.val();
         // Same as filter
@@ -105,7 +94,7 @@ class App extends Component {
   render() {
     const { annonser, favorites } = this.state;
     const listOfAnnonser = annonser.map(annons => (
-      <div key={annons.annonsid}>
+      <div key={annons.annonsid} className="annons">
         <p>
           { annons.annonsrubrik }
         </p>
@@ -116,17 +105,22 @@ class App extends Component {
     ));
 
     const listOfFavorites = favorites.map(fav => (
-      <p> { fav.annonsrubrik }
-        <button onClick={() => this.removeOneAnnons(fav) }>Remove</button>
-       </p>
+      <div className="annons"> 
+        <p>{ fav.annonsrubrik }</p>
+        <button onClick={() => this.removeOneAnnons(fav) }>Unfav</button>
+       </div>
     ))
 
     return (
       <div>
-        <h1>Favvisar</h1>
-        { listOfFavorites }
-        <h1>Annat skit</h1>
-        { listOfAnnonser }
+        <section className="favorite-section">
+          <h1>Favoriter</h1>
+          { listOfFavorites }
+        </section>
+        <section className="annons-section">
+          <h1>Annonser</h1>
+          { listOfAnnonser }
+        </section>
       </div>
     );
   }
