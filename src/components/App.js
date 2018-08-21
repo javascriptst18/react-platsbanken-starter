@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase, { favorites } from '../firebase';
+import firebase, { favorites, googleProvider } from '../firebase';
 import '../styles/normalize.css';
 import '../styles/App.css';
 
@@ -91,6 +91,12 @@ class App extends Component {
       .remove();
   }
 
+  login = () => {
+    firebase
+      .auth()
+      .signInWithPopup(googleProvider)
+  }
+
   render() {
     const { annonser, favorites } = this.state;
     const listOfAnnonser = annonser.map(annons => (
@@ -113,6 +119,9 @@ class App extends Component {
 
     return (
       <div>
+        <button onClick={this.login}>
+          Google Login
+        </button>
         <section className="favorite-section">
           <h1>Favoriter</h1>
           { listOfFavorites }
