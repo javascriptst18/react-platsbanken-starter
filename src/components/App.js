@@ -27,16 +27,6 @@ class App extends Component {
     this.auth();
   }
 
-  auth = () => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if(user){
-        this.setState({ user });
-      } else {
-        this.setState({ user: ''});
-      }
-    })
-  }
-
   listenForFavorites = () => {
     favorites // Listen for path /favorites only
       .on('child_added', (snapshot) => {
@@ -93,7 +83,7 @@ class App extends Component {
     firebase
       .database()
       .ref(`/favorites/${favorit.annonsid}`)
-      .set(favorit);
+      .set({ ...favorit, createdBy: this.state.user.uid });
   }
 
   removeOneAnnons = (favorit) => {
@@ -103,13 +93,28 @@ class App extends Component {
       .remove();
   }
 
+  auth = () => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ user });
+      } else {
+        this.setState({ user: '' });
+      }
+    })
+  }
+
   login = () => {
     firebase
       .auth()
       .signInWithPopup(googleProvider)
   }
 
+  logout = () => {
+    firebase.auth().logout();
+  }
+
   render() {
+    console.log(this.state.user);
     const { annonser, favorites } = this.state;
     const listOfAnnonser = annonser.map(annons => (
       <div key={annons.annonsid} className="annons">
@@ -134,6 +139,9 @@ class App extends Component {
         <button onClick={this.login}>
           Google Login
         </button>
+        {
+          this.state.user && this.state.user.email
+        }
         <section className="favorite-section">
           <h1>Favoriter</h1>
           { listOfFavorites }
